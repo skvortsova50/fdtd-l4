@@ -31,7 +31,8 @@ class FDTD2D_TMz:
 
         # --- Джерело ---
         self.src_x, self.src_y = Nx//2, Ny//2
-        self.t0, self.spread = 30 * self.dt, 20 * self.dt
+        self.t0 = 80 * self.dt
+        self.spread = 40 * self.dt
         # self.t0, self.spread = 10, 30
 
         # --- Датчик ---
@@ -41,7 +42,7 @@ class FDTD2D_TMz:
         # gap
         self.gap_x_position = 80
         self.gap_y_position = Nx // 2
-        self.gap_width = 10
+        self.gap_width = 1
 
         # TFSF
         self.left_i = 20
@@ -179,13 +180,26 @@ class FDTD2D_TMz:
 
 
     # -------------------------------------------------
+
     def scatterer(self):
-        self.Ez[self.gap_x_position: self.gap_x_position + self.gap_width + 1, : self.gap_y_position] = 0
-        self.Ez[self.gap_x_position: self.gap_x_position + self.gap_width + 1, self.gap_y_position + 1 :] = 0
-        self.Hy[self.gap_x_position: self.gap_x_position + self.gap_width, : self.gap_y_position] = 0
-        self.Hy[self.gap_x_position: self.gap_x_position + self.gap_width, self.gap_y_position + 1:] = 0
-        self.Hx[self.gap_x_position: self.gap_x_position + self.gap_width + 1, : self.gap_y_position + 1] = 0
-        self.Hx[self.gap_x_position: self.gap_x_position + self.gap_width + 1, self.gap_y_position + 2:] = 0
+
+        self.Ez[self.gap_x_position:self.gap_x_position + self.gap_width + 1,
+            :self.gap_y_position] = 0
+
+        self.Ez[self.gap_x_position:self.gap_x_position + self.gap_width + 1,
+            self.gap_y_position + 1:] = 0
+
+        self.Hy[self.gap_x_position:self.gap_x_position + self.gap_width,
+            :self.gap_y_position] = 0
+
+        self.Hy[self.gap_x_position:self.gap_x_position + self.gap_width,
+            self.gap_y_position + 1:] = 0
+
+        self.Hx[self.gap_x_position:self.gap_x_position + self.gap_width + 1,
+            :self.gap_y_position + 1] = 0
+
+        self.Hx[self.gap_x_position:self.gap_x_position + self.gap_width + 1,
+            self.gap_y_position + 2:] = 0
 
         # curl_H = (
         #         (self.Hy[1:, 1:-1] - self.Hy[:-1, 1:-1]) / self.dx
@@ -221,12 +235,12 @@ class FDTD2D_TMz:
         im = ax.imshow(self.Ez.T, cmap="RdBu_r",
                        vmin=-v_amp, vmax=v_amp, origin="lower")
         # gap
-        ax.plot((self.gap_x_position, self.gap_x_position), (0, self.gap_y_position - 1), c="k", linewidth=2)
-        ax.plot((self.gap_x_position, self.gap_x_position), (self.gap_y_position + 1, self.Ny), c="k", linewidth=2)
-        ax.plot((self.gap_x_position + self.gap_width, self.gap_x_position + self.gap_width), (0, self.gap_y_position - 1), c="k", linewidth=2)
-        ax.plot((self.gap_x_position + self.gap_width, self.gap_x_position + self.gap_width), (self.gap_y_position + 1, self.Ny), c="k", linewidth=2)
-        ax.plot((self.gap_x_position, self.gap_x_position + self.gap_width), (self.gap_y_position - 1, self.gap_y_position - 1), c="k", linewidth=2)
-        ax.plot((self.gap_x_position, self.gap_x_position + self.gap_width), (self.gap_y_position + 1, self.gap_y_position + 1), c="k", linewidth=2)
+        ax.plot((self.gap_x_position, self.gap_x_position), (0, self.gap_y_position - 1), c="k", linewidth=1)
+        ax.plot((self.gap_x_position, self.gap_x_position), (self.gap_y_position + 1, self.Ny), c="k", linewidth=1)
+        ax.plot((self.gap_x_position + self.gap_width, self.gap_x_position + self.gap_width), (0, self.gap_y_position - 1), c="k", linewidth=1)
+        ax.plot((self.gap_x_position + self.gap_width, self.gap_x_position + self.gap_width), (self.gap_y_position + 1, self.Ny), c="k", linewidth=1)
+        ax.plot((self.gap_x_position, self.gap_x_position + self.gap_width), (self.gap_y_position - 1, self.gap_y_position - 1), c="k", linewidth=1)
+        ax.plot((self.gap_x_position, self.gap_x_position + self.gap_width), (self.gap_y_position + 1, self.gap_y_position + 1), c="k", linewidth=1)
         # # TFSF
         # ax.plot((self.left_i, self.right_i), (self.left_j, self.left_j), c="g", linestyle="--", linewidth=1)
         # ax.plot((self.left_i, self.right_i), (self.right_j, self.right_j), c="g", linestyle="--", linewidth=1)
@@ -254,4 +268,3 @@ class FDTD2D_TMz:
 if __name__ == "__main__":
     sim = FDTD2D_TMz(Nx=120, Ny=120, Nt=1200)
     sim.animate()
-    sim.plot_incident()
